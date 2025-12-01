@@ -21,19 +21,37 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                sh 'npm install'
+                sh """
+                docker run --rm \
+                  -v ${env.WORKSPACE}:/app \
+                  -w /app \
+                  node:18-alpine \
+                  npm install
+                """
             }
         }
 
         stage('Testing') {
             steps {
-                sh 'npm test || true'   // si no hay tests, no falla
+                sh """
+                docker run --rm \
+                  -v ${env.WORKSPACE}:/app \
+                  -w /app \
+                  node:18-alpine \
+                  sh -c 'npm test || true'
+                """
             }
         }
 
         stage('Build') {
             steps {
-                sh 'npm run build || echo "No build step"'
+                sh """
+                docker run --rm \
+                  -v ${env.WORKSPACE}:/app \
+                  -w /app \
+                  node:18-alpine \
+                  npm run build
+                """
             }
         }
 
@@ -86,3 +104,4 @@ pipeline {
 
     }
 }
+
