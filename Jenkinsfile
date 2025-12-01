@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = "michellerebc"
+        DOCKERHUB_USER = "michelleosorio"
         DOCKERHUB_REPO = "backend-test"
 
         GITHUB_USER = "michellerebc"
