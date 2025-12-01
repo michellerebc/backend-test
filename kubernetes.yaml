@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: michellerebc
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: michellerebc
+data:
+  USERNAME: "claudia"
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+  namespace: michellerebc
+type: Opaque
+data:
+  API_KEY: YXBpa2V5MTIz     # EJEMPLO: "apikey123" en base64 — cámbialo
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-test
+  namespace: michellerebc
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-test
+  template:
+    metadata:
+      labels:
+        app: backend-test
+    spec:
+      containers:
+      - name: backend-test
+        image: ghcr.io/michellerebc/backend-test:IMAGE_TAG
+        ports:
+        - containerPort: 3000
+        env:
+        - name: USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: USERNAME
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: API_KEY
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: michellerebc
+spec:
+  selector:
+    app: backend-test
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
