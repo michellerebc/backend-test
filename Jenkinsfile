@@ -15,7 +15,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/michellerebc/backend-test.git'
+                git branch: 'main', url: 'https://github.com/michellerebc/backend-test.git'
             }
         }
 
